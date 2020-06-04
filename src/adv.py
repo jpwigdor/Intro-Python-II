@@ -55,7 +55,7 @@ room['treasure'].s_to = room['narrow']
 # complete password will unlock "Treasure"
 
 items = {
-    'key': Item("Key", "A heavy, bronze key.")
+    'key': Item("key", "A heavy, bronze key.")
 }
 
 # add the items to the rooms
@@ -87,14 +87,14 @@ print(f'\nWelcome {player.name}!')
 
 print_color('cyan', f'\nWelcome {player.name}!\n\n')
 
-time.sleep(0.5)
+# time.sleep(0.5)
 
 
 def location_print(color):
-    print_color(color, f'\n\nYour location: {player.current_room.name}')
-    time.sleep(0.5)
+    print_color(
+        color, f'\033[1m\n\nYour location: {player.current_room.name}\33[00m')
     print_color(color, f'{player.current_room.description} \n')
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
 
 while True:
@@ -103,7 +103,9 @@ while True:
     elif player.current_room == room['foyer']:
         location_print('purple')
     elif player.current_room == room['library']:
+        # make some if/else statment depending on if the player has a key in their inventory.
         print(f'This room is locked')
+        player.current_room == room['foyer']
     elif player.current_room == room['overlook']:
         location_print('light_purple')
     elif player.current_room == room['narrow']:
@@ -120,21 +122,34 @@ while True:
 
     if player_move in ['n', 's', 'e', 'w']:
         player.move(player_move)
+    # prints the player's inventory
     elif player_move == 'i':
-        print("i need to code this out")
+        if len(player.inventory) > 0:
+            for item in player.inventory:
+                print_color('yellow', '\n\nInventory:')
+                print_color('yellow', f'{item.name}')
+        else:
+            print_color('red', '\n\nNo items in your inventory')
+    # prints a list of items in the room
     elif player_move == 'l':
+        # loop over them items and print them out!
         if len(player.current_room.items) > 0:
             print_color('green', '\n\nThis room contains:')
             for item in player.current_room.items:
                 print(f'{item.name}')
+        # if no items are present in the room
         else:
             print_color('red', 'This room has nothing in it.')
+    # get the item from the room into the player's inventory
     elif player_move.startswith('get'):
         query = player_move.split()
-        if len(player.current_room.items) > 0 and player.current_room.has_item(query[1]):
-            player.grab_item(items[query[1]])
+        # if the specified item is in the room, put in player inventory
+        if len(player.current_room.items) > 0 and player.current_room.has_item(item):
+            player.grab_item(items[item])
+        # if the specified item is not in the room, print this
         else:
             print_color('red', f'This room does not contain item {query[1]}')
+    # quits the game
     elif player_move == 'q':
         exit()
     else:
